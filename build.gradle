@@ -15,7 +15,7 @@ repositories {
 }
 
 flyway {
-	configFiles = ['src/main/resources/application-production.properties']
+	configFiles = ['src/main/resources/application.properties']
 }
 
 dependencies {
