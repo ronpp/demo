@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/files")
@@ -49,19 +49,10 @@ public class FileController {
 
     @GetMapping
     public String hack() {
-        List<String> files = fileRepository.getFileIds();
-
-        String filesStr = "";
-        for (String file : files) {
-            filesStr += "<img src='/files/"+file+"' style='width:15em'>";
-        }
-
-        return "<form method=\"POST\" enctype=\"multipart/form-data\" style=\"display:flex;\">\n" +
-                "    <input id=\"file\" type=\"file\" name=\"file\" style=\"display:none\" onchange=\"document.getElementById('preview').src=window.URL.createObjectURL(event.target.files[0])\">\n" +
-                "    <label for=\"file\" style=\"border: 1px dashed #999\">\n" +
-                "        <img id=\"preview\" src=\"\" style=\"width:64px;\">\n" +
-                "    </label>\n" +
-                "    <input type=\"submit\" style=\"background:#0096f7;color: white;border: 0;border-radius: 3px;padding: 8px;\" value=\"Upload\">\n" +
-                "</form>\n <div style='display:flex;flex-wrap:wrap;gap:1em;'>" + filesStr + "</div>";
+        return "<form method='POST' enctype='multipart/form-data' style='display:flex;'>" +
+                "<input id='file' type='file' name='file' style='display:none' onchange='preview.src=window.URL.createObjectURL(event.target.files[0])'>" +
+                "<label for='file' style='border:1px dashed #999'><img id='preview' style='width:64px;max-height:64px;object-fit:contain;border:none'></label>" +
+                "<input type='submit' style='background:#0096f7;color: white;border: 0;border-radius: 3px;padding: 8px;' value='Upload'>" +
+                "</form><div style='display:flex;flex-wrap:wrap;gap:1em;'>" + fileRepository.getFileIds().stream().map(id -> "<img src='/files/"+id+"' style='width:12em;height:12em;object-fit:contain'>").collect(Collectors.joining()) + "</div>";
     }
 }

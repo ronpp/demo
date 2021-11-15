@@ -16,7 +16,7 @@ public class UserController {
     @Autowired private UserRepository userRepository;
     @Autowired private BCryptPasswordEncoder passwordEncoder;
 
-    @PostMapping("/register")
+    @PostMapping(path = "/register" )
     public String register(@RequestBody UserRegisterRequest userRegisterRequest) {
 
         if (userRepository.findByUsername(userRegisterRequest.username) == null) {
@@ -25,8 +25,23 @@ public class UserController {
             user.password = passwordEncoder.encode(userRegisterRequest.password);
             user.enabled = true;
             userRepository.save(user);
-            return "OK";   // TODO
+            return userRepository.save(user).userid.toString();
         }
-        return "ERROR";    // TODO
+        return "ERROR";
     }
+
+    @GetMapping("/all")
+    public List<User> getALl(){
+        return userRepository.findAll();
+    }
+
+    // WEB REGISTER FORM (for testing)
+    @GetMapping("/register/web")
+    public String hack(){
+        return "<div style='display:flex;flex-direction:column;width:20em;gap:0.5em'>" +
+                "<input name='username' id='username' placeholder='Username'>" +
+                "<input id='password' type='password' placeholder='Password'>" +
+                "<input type='button' value='Register' onclick='fetch(\"/users/register/\",{method:\"POST\",headers:{\"Content-Type\":\"application/json\"},body:`{\"username\":\"${username.value}\",\"password\":\"${password.value}\"}`})'></div>";
+    }
+
 }
